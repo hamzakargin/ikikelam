@@ -7,12 +7,12 @@ import { ENV } from "./lib/env.js";
 import { rateLimiter } from "./middleware/rateLimiter.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { app, server } from "./lib/socket.js";
 
-const app = express();
 const __dirname = path.resolve();
 
 const PORT = ENV.PORT || 3000;
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 app.use(rateLimiter);
@@ -27,7 +27,7 @@ if (ENV.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log("Server working on port:" + PORT);
   connectDB();
 });
